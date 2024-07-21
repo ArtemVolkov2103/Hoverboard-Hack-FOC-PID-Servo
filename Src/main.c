@@ -175,7 +175,9 @@ static int16_t    speed;                // local variable for speed. -1000 to 10
 static uint32_t    inactivity_timeout_counter;
 static MultipleTap MultipleTapBrake;    // define multiple tap functionality for the Brake pedal
 
-
+int32_t map(int32_t x, int32_t in_min, int32_t in_max, int32_t out_min, int32_t out_max) {
+    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
 int main(void) {
 
   HAL_Init();
@@ -479,9 +481,21 @@ int main(void) {
       PIDL.input1 = -PIDR.input1;
     #endif       
 			
-			
-		PIDL.feedback = (MotorPosL*2000)/5400; // scale to 2000 units per rotation   sf = .37 =2000/(360 deg*15pole pairs= 5400 elec deg)
-		PIDR.feedback = (MotorPosR*2000)/5400;  //minimum step is 60 deg elec phase angle, or 4 deg mechanical angle
+		        HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
+            uint32_t pot_value_left = HAL_ADC_GetValue(&hadc1);
+
+            HAL_ADC_PollForConversion(&hadc2, HAL_MAX_DELAY);
+            uint32_t pot_value_right = HAL_ADC_GetValue(&hadc2);
+
+            // Преобразование значений потенциометров в положение колес
+            int32_t wheel_position_left = map(pot_value_left, 0, 4095, -1000, 1000);
+            int32_t wheel_position_right = map(pot_value_right, 0, 4095, -1000, 1000);
+
+            // Использование значений положения колес в PID-контроллере
+            PIDL.feedback = wheel_position_left;
+            PIDR.feedback = wheel_position_right;	
+		//PIDL.feedback = (MotorPosL*2000)/5400; // scale to 2000 units per rotation   sf = .37 =2000/(360 deg*15pole pairs= 5400 elec deg)
+		//PIDR.feedback = (MotorPosR*2000)/5400;  //minimum step is 60 deg elec phase angle, or 4 deg mechanical angle
 		PID(&PIDL);// left pid control
 	  //print_PID(PIDL);  
 		PID(&PIDR);// right pid control
@@ -497,6 +511,10 @@ int main(void) {
 		}	
 		pwml = cmdL;
 		pwmr = cmdR;
+    if (timeoutFlgADC) {
+      // Обработка ошибки тайм-аута ADC
+      beepCount(2, 24, 1);
+    }
 		//if (main_loop_counter >= 2) pwml = pwmr=500;//speed test
 		
 		
