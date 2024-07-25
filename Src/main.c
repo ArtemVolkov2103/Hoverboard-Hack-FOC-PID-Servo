@@ -466,13 +466,16 @@ int main(void) {
 		
       speed1 = (int16_t)(speed1Fixdt >> 16);  // convert fixed-point to integer
       speed2 = (int16_t)(speed2Fixdt >> 16);  // convert fixed-point to integer
+      adc_buffer.pot_left = speed1;
+      adc_buffer.pot_right = speed2;
 		// uncomment for step input testing 
 			//speed1 = ( main_loop_counter > 4)*500; 
 			//speed2 = ( main_loop_counter >  4)*500; 
 		// end step input testing	
-			
-		PIDL.input = speed1;//-input1[inIdx].cmd; scaled to +_1000 counts input
-		PIDR.input = speed2;// input2[inIdx].cmd scaled to +- 1000 counts input
+		//PIDL.input = speed1;//-input1[inIdx].cmd; scaled to +_1000 counts input
+		//PIDR.input = speed2;// input2[inIdx].cmd scaled to +- 1000 counts input	
+		PIDL.input = 100;//-input1[inIdx].cmd; scaled to +_1000 counts input
+		PIDR.input = 100;// input2[inIdx].cmd scaled to +- 1000 counts input
 			
 		#ifdef INVERT_R_DIRECTION
       PIDL.input = -PIDL.input1;       
@@ -481,21 +484,10 @@ int main(void) {
       PIDL.input1 = -PIDR.input1;
     #endif       
 			
-		        HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
-            uint32_t pot_value_left = HAL_ADC_GetValue(&hadc1);
-
-            HAL_ADC_PollForConversion(&hadc2, HAL_MAX_DELAY);
-            uint32_t pot_value_right = HAL_ADC_GetValue(&hadc2);
-
-            // Преобразование значений потенциометров в положение колес
-            int32_t wheel_position_left = map(pot_value_left, 0, 4095, -1000, 1000);
-            int32_t wheel_position_right = map(pot_value_right, 0, 4095, -1000, 1000);
-
-            // Использование значений положения колес в PID-контроллере
-            PIDL.feedback = wheel_position_left;
-            PIDR.feedback = wheel_position_right;	
-		//PIDL.feedback = (MotorPosL*2000)/5400; // scale to 2000 units per rotation   sf = .37 =2000/(360 deg*15pole pairs= 5400 elec deg)
-		//PIDR.feedback = (MotorPosR*2000)/5400;  //minimum step is 60 deg elec phase angle, or 4 deg mechanical angle
+    //PIDL.feedback = speed1;
+    //PIDR.feedback = speed2;	
+		PIDL.feedback = (MotorPosL*2000)/5400; // scale to 2000 units per rotation   sf = .37 =2000/(360 deg*15pole pairs= 5400 elec deg)
+		PIDR.feedback = (MotorPosR*2000)/5400;  //minimum step is 60 deg elec phase angle, or 4 deg mechanical angle
 		PID(&PIDL);// left pid control
 	  //print_PID(PIDL);  
 		PID(&PIDR);// right pid control
