@@ -188,7 +188,7 @@ void DMA1_Channel1_IRQHandler(void) {
     rtU_Left.i_phaBC      = curL_phaB;
     rtU_Left.i_DCLink     = curL_DC;
     
-    rtU_Left.a_mechAngle   = (int16_t)(adc_buffer.pot_left); // Angle input in DEGREES [0,360] in fixdt(1,16,4) data type. If `angle` is float use `= (int16_t)floor(angle * 16.0F)` If `angle` is integer use `= (int16_t)(angle << 4)`
+    rtU_Left.a_mechAngle   = (int16_t)(map(adc_buffer.pot_left, -1000, 1000, 0, 360)); // Angle input in DEGREES [0,360] in fixdt(1,16,4) data type. If `angle` is float use `= (int16_t)floor(angle * 16.0F)` If `angle` is integer use `= (int16_t)(angle << 4)`
     
     /* Step the controller */
     #ifdef MOTOR_LEFT_ENA    
@@ -228,7 +228,7 @@ void DMA1_Channel1_IRQHandler(void) {
     rtU_Right.i_phaAB       = curR_phaB;
     rtU_Right.i_phaBC       = curR_phaC;
     rtU_Right.i_DCLink      = curR_DC;
-    rtU_Right.a_mechAngle   = (int16_t)(adc_buffer.pot_right); // Angle input in DEGREES [0,360] in fixdt(1,16,4) data type. If `angle` is float use `= (int16_t)floor(angle * 16.0F)` If `angle` is integer use `= (int16_t)(angle << 4)`
+    rtU_Right.a_mechAngle   = (int16_t)(map(adc_buffer.pot_right, -1000, 1000, 0, 360)); // Angle input in DEGREES [0,360] in fixdt(1,16,4) data type. If `angle` is float use `= (int16_t)floor(angle * 16.0F)` If `angle` is integer use `= (int16_t)(angle << 4)`
     
     /* Step the controller */
     #ifdef MOTOR_RIGHT_ENA

@@ -466,16 +466,16 @@ int main(void) {
 		
       speed1 = (int16_t)(speed1Fixdt >> 16);  // convert fixed-point to integer
       speed2 = (int16_t)(speed2Fixdt >> 16);  // convert fixed-point to integer
-      adc_buffer.pot_left = speed1;
-      adc_buffer.pot_right = speed2;
+      adc_buffer.pot_left = speed2;
+      adc_buffer.pot_right = speed1;
 		// uncomment for step input testing 
 			//speed1 = ( main_loop_counter > 4)*500; 
 			//speed2 = ( main_loop_counter >  4)*500; 
 		// end step input testing	
 		//PIDL.input = speed1;//-input1[inIdx].cmd; scaled to +_1000 counts input
 		//PIDR.input = speed2;// input2[inIdx].cmd scaled to +- 1000 counts input	
-		PIDL.input = 100;//-input1[inIdx].cmd; scaled to +_1000 counts input
-		PIDR.input = 100;// input2[inIdx].cmd scaled to +- 1000 counts input
+		PIDL.input = 800;//-input1[inIdx].cmd; scaled to +_1000 counts input
+		PIDR.input = 800;// input2[inIdx].cmd scaled to +- 1000 counts input
 			
 		#ifdef INVERT_R_DIRECTION
       PIDL.input = -PIDL.input1;       
@@ -484,12 +484,13 @@ int main(void) {
       PIDL.input1 = -PIDR.input1;
     #endif       
 			
-    //PIDL.feedback = speed1;
-    //PIDR.feedback = speed2;	
+    //PIDL.feedback = speed2;
+    //PIDR.feedback = speed1;
 		PIDL.feedback = (MotorPosL*2000)/5400; // scale to 2000 units per rotation   sf = .37 =2000/(360 deg*15pole pairs= 5400 elec deg)
 		PIDR.feedback = (MotorPosR*2000)/5400;  //minimum step is 60 deg elec phase angle, or 4 deg mechanical angle
+    printf("MotorPosR: %i \t -- MotorPosL: %i \t-- speed1: %i \t -- speed2: %i \r\n", MotorPosR, MotorPosL, speed1, speed2);
 		PID(&PIDL);// left pid control
-	  //print_PID(PIDL);  
+	  print_PID(PIDL);  
 		PID(&PIDR);// right pid control
 		//print_PID(PIDR);
 		//limit pwm to 100 during first five seconds to keep turn on transients safe
@@ -537,14 +538,14 @@ int main(void) {
 //          board_temp_adcFilt,       // 7: for board temperature calibration
 //          board_temp_deg_c);        // 8: for verifying board temperature calibration
 //				}
-				 if (main_loop_counter % 1 == 0) {    //  Send PID data periodically every 5 ms
+				 /*if (main_loop_counter % 1 == 0) {    //  Send PID data periodically every 5 ms
         
 				printf("IL %i FL %i IR %i FR %i\r\n",
 				  PIDL.input,
 					PIDL.feedback,
 				  PIDR.input,
 					PIDR.feedback
-					 );}
+					 );}*/
 					
           //cmdL,                     // 3: output command: [-1000, 1000]
           //cmdR,                     // 4: output command: [-1000, 1000]           
