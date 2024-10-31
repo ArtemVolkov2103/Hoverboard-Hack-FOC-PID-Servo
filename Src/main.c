@@ -474,8 +474,8 @@ int main(void) {
 		// end step input testing	
 		//PIDL.input = speed1;//-input1[inIdx].cmd; scaled to +_1000 counts input
 		//PIDR.input = speed2;// input2[inIdx].cmd scaled to +- 1000 counts input	
-		PIDL.input = 800;//-input1[inIdx].cmd; scaled to +_1000 counts input
-		PIDR.input = 800;// input2[inIdx].cmd scaled to +- 1000 counts input
+		PIDL.input = 200;//-input1[inIdx].cmd; scaled to +_1000 counts input
+		PIDR.input = 200;// input2[inIdx].cmd scaled to +- 1000 counts input
 			
 		#ifdef INVERT_R_DIRECTION
       PIDL.input = -PIDL.input1;       
@@ -484,23 +484,23 @@ int main(void) {
       PIDL.input1 = -PIDR.input1;
     #endif       
 			
-    //PIDL.feedback = speed2;
-    //PIDR.feedback = speed1;
-		PIDL.feedback = (MotorPosL*2000)/5400; // scale to 2000 units per rotation   sf = .37 =2000/(360 deg*15pole pairs= 5400 elec deg)
-		PIDR.feedback = (MotorPosR*2000)/5400;  //minimum step is 60 deg elec phase angle, or 4 deg mechanical angle
-    printf("MotorPosR: %i \t -- MotorPosL: %i \t-- speed1: %i \t -- speed2: %i \r\n", MotorPosR, MotorPosL, speed1, speed2);
+    PIDL.feedback = speed2;
+    PIDR.feedback = speed1;
+		//PIDL.feedback = (MotorPosL*2000)/5400; // scale to 2000 units per rotation   sf = .37 =2000/(360 deg*15pole pairs= 5400 elec deg)
+		//PIDR.feedback = (MotorPosR*2000)/5400;  //minimum step is 60 deg elec phase angle, or 4 deg mechanical angle
+    printf(" MotorPosL: %i \t -- speed2: %i \r\n", MotorPosL, speed2);
 		PID(&PIDL);// left pid control
 	  print_PID(PIDL);  
 		PID(&PIDR);// right pid control
 		//print_PID(PIDR);
 		//limit pwm to 100 during first five seconds to keep turn on transients safe
 		if(main_loop_counter < 1000){
-		cmdL = CLAMP(PIDL.output,-100,100);
-		cmdR = CLAMP(PIDR.output,-100,100);
+		cmdL = CLAMP(PIDL.output,-50,50);
+		cmdR = CLAMP(PIDR.output,-50,50);
 		}
     else {	
-		cmdL = CLAMP(PIDL.output,-1000,1000);
-		cmdR = CLAMP(PIDR.output,-1000,1000);	
+		cmdL = CLAMP(PIDL.output,-50,50);
+		cmdR = CLAMP(PIDR.output,-50,50);	
 		}	
 		pwml = cmdL;
 		pwmr = cmdR;
