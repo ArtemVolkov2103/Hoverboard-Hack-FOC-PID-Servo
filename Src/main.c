@@ -474,8 +474,8 @@ int main(void) {
 		// end step input testing	
 		//PIDL.input = speed1;//-input1[inIdx].cmd; scaled to +_1000 counts input
 		//PIDR.input = speed2;// input2[inIdx].cmd scaled to +- 1000 counts input	
-		PIDL.input = 200;//-input1[inIdx].cmd; scaled to +_1000 counts input
-		PIDR.input = 200;// input2[inIdx].cmd scaled to +- 1000 counts input
+		PIDL.input = 800;//-input1[inIdx].cmd; scaled to +_1000 counts input
+		PIDR.input = 800;// input2[inIdx].cmd scaled to +- 1000 counts input
 			
 		#ifdef INVERT_R_DIRECTION
       PIDL.input = -PIDL.input1;       
@@ -501,7 +501,12 @@ int main(void) {
     else {	
 		cmdL = CLAMP(PIDL.output,-50,50);
 		cmdR = CLAMP(PIDR.output,-50,50);	
-		}	
+		}
+    if(abs(PIDL.error) < PIDDZ) {
+      cmdL = 0;  // Остановить мотор в зоне нечувствительности
+    } else {
+      cmdL = CLAMP(PIDL.output, -50, 50); // Ограничить PWM при малых ошибках
+    }	
 		pwml = cmdL;
 		pwmr = cmdR;
     if (timeoutFlgADC) {
