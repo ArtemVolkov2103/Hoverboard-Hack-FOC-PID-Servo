@@ -495,17 +495,17 @@ int main(void) {
 		//print_PID(PIDR);
 		//limit pwm to 100 during first five seconds to keep turn on transients safe
 		if(main_loop_counter < 1000){
-		cmdL = CLAMP(PIDL.output,-50,50);
+		cmdL = CLAMP(-PIDL.output,-50,50);
 		cmdR = CLAMP(PIDR.output,-50,50);
 		}
     else {	
-		cmdL = CLAMP(PIDL.output,-50,50);
+		cmdL = CLAMP(-PIDL.output,-50,50);
 		cmdR = CLAMP(PIDR.output,-50,50);	
 		}
     if(abs(PIDL.error) < PIDDZ) {
       cmdL = 0;  // Остановить мотор в зоне нечувствительности
     } else {
-      cmdL = CLAMP(PIDL.output, -50, 50); // Ограничить PWM при малых ошибках
+      cmdL = CLAMP(-PIDL.output, -50, 50); // Ограничить PWM при малых ошибках
     }	
 		pwml = cmdL;
 		pwmr = cmdR;
