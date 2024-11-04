@@ -314,17 +314,20 @@
 	
 	#ifdef PID_CONTROL 
 	  
-	 #define KP  1.5
+	 #define KP  1.6
 	 #define KI  0.1
-	 #define PIDDZ 10
+   #define KD  0.5   // Добавляем коэффициент D
+	 #define PIDDZ 4
 	 #define PIDLIM  360
 	 typedef struct 
      {
 		 float Kp;
 		 float Ki;
+     float Kd;    // Добавляем Kd в структуру
 		 int dz ;
 		 int limit;
 		 int error;
+     int prev_error; // Добавляем для расчета производной
 		 int cum_error;
 		 int input;
 		 int feedback;

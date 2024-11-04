@@ -312,10 +312,15 @@ void PID( PID_DATA *p){
 		 }PID_DATA ;
    */
 	p->error = p->input -  p->feedback;
+
+  // Расчет производной (D-составляющей)
+  int d_error = p->error - p->prev_error;
+  p->prev_error = p->error;
+  
 	p->cum_error = p->cum_error + p->error;
 	if (p->cum_error > p->limit ) {p->cum_error = p->limit;}
 	else if (p->cum_error< -p->limit) {p->cum_error = - p->limit ;}
-	p->output = p->error*p->Kp + p->cum_error*p->Ki ;
+	p->output = p->error*p->Kp + p->cum_error*p->Ki + d_error * p->Kd;
 	
 	
 }
