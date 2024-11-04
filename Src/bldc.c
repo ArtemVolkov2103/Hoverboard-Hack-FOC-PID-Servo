@@ -187,8 +187,7 @@ void DMA1_Channel1_IRQHandler(void) {
     rtU_Left.i_phaAB      = curL_phaA;
     rtU_Left.i_phaBC      = curL_phaB;
     rtU_Left.i_DCLink     = curL_DC;
-    
-    rtU_Left.a_mechAngle   = (int16_t)(map(adc_buffer.pot_left, -1000, 1000, 0, 360)); // Angle input in DEGREES [0,360] in fixdt(1,16,4) data type. If `angle` is float use `= (int16_t)floor(angle * 16.0F)` If `angle` is integer use `= (int16_t)(angle << 4)`
+    //rtU_Left.a_mechAngle   = ...; // Angle input in DEGREES [0,360] in fixdt(1,16,4) data type. If `angle` is float use `= (int16_t)floor(angle * 16.0F)` If `angle` is integer use `= (int16_t)(angle << 4)`
     
     /* Step the controller */
     #ifdef MOTOR_LEFT_ENA    
@@ -202,8 +201,7 @@ void DMA1_Channel1_IRQHandler(void) {
   // errCodeLeft  = rtY_Left.z_errCode;
   // motSpeedLeft = rtY_Left.n_mot;
   // motAngleLeft = rtY_Left.a_elecAngle;
-  motAngleLeft =rtY_Left.a_elecAngle;  // vam Left motor electrical angle
-  //motAngleLeft =rtU_Left.a_mechAngle;
+    motAngleLeft =rtY_Left.a_elecAngle;  // vam Left motor electrical angle
 
     /* Apply commands */
     LEFT_TIM->LEFT_TIM_U    = (uint16_t)CLAMP(ul + pwm_res / 2, pwm_margin, pwm_res-pwm_margin);
@@ -228,7 +226,7 @@ void DMA1_Channel1_IRQHandler(void) {
     rtU_Right.i_phaAB       = curR_phaB;
     rtU_Right.i_phaBC       = curR_phaC;
     rtU_Right.i_DCLink      = curR_DC;
-    rtU_Right.a_mechAngle   = (int16_t)(map(adc_buffer.pot_right, -1000, 1000, 0, 360)); // Angle input in DEGREES [0,360] in fixdt(1,16,4) data type. If `angle` is float use `= (int16_t)floor(angle * 16.0F)` If `angle` is integer use `= (int16_t)(angle << 4)`
+    //rtU_Right.a_mechAngle   = ...; // Angle input in DEGREES [0,360] in fixdt(1,16,4) data type. If `angle` is float use `= (int16_t)floor(angle * 16.0F)` If `angle` is integer use `= (int16_t)(angle << 4)`
     
     /* Step the controller */
     #ifdef MOTOR_RIGHT_ENA
@@ -243,7 +241,6 @@ void DMA1_Channel1_IRQHandler(void) {
  // motSpeedRight = rtY_Right.n_mot;
  // motAngleRight = rtY_Right.a_elecAngle;
     motAngleRight = rtY_Right.a_elecAngle;  //vam right motor elec angle
-    //motAngleRight = rtU_Right.a_mechAngle;
 
     /* Apply commands */
     RIGHT_TIM->RIGHT_TIM_U  = (uint16_t)CLAMP(ur + pwm_res / 2, pwm_margin, pwm_res-pwm_margin);

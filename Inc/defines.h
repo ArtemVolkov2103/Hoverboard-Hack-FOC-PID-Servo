@@ -220,8 +220,6 @@ typedef struct {
   uint16_t l_tx2;
   uint16_t temp;
   uint16_t l_rx2;
-  uint16_t pot_left;   // Добавьте это поле
-  uint16_t pot_right;  // Добавьте это поле
 } adc_buf_t;
 
 // Define I2C, Nunchuk, PPM, PWM functions
