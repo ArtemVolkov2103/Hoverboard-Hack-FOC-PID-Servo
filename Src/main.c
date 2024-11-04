@@ -496,16 +496,16 @@ int main(void) {
 		cmdR = CLAMP(PIDR.output,-100,100);
 		}
     else {	
-		cmdL = CLAMP(PIDL.output,-1000,1000);
-		cmdR = CLAMP(PIDR.output,-1000,1000);	
+		cmdL = CLAMP(PIDL.output,-500,500);
+		cmdR = CLAMP(PIDR.output,-500,500);	
 		}
 
-    if(abs(PIDL.error) < PIDDZ) {
+    /*if(abs(PIDL.error) < PIDDZ) {
       cmdL = 0;  // Остановить мотор в зоне нечувствительности
-    } else {
-      cmdL = CLAMP(PIDL.output, -50, 50); // Ограничить PWM при малых ошибках
+    } else if (abs(PIDL.error) > PIDDZ && abs(PIDL.error) < PIDDZ * 10){
+      cmdL = CLAMP(PIDL.output, -100, 100); // Ограничить PWM при малых ошибках
     }
-
+    printf("cmdL:%i \t PIDL.output:%i \r\n", cmdL, PIDL.output);*/
 		pwml = -cmdL;//инверсия выхода регулятора для того, чтобы колесо двигалось К цели, а не от неё
 		pwmr = cmdR;
 		//if (main_loop_counter >= 2) pwml = pwmr=500;//speed test
