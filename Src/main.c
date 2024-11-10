@@ -463,7 +463,8 @@ int main(void) {
       rateLimiter16(input2[inIdx].cmd , RATE, &speed2RateFixdt);
       filtLowPass32(speed1RateFixdt >> 4, FILTER, &speed1Fixdt);
       filtLowPass32(speed2RateFixdt >> 4, FILTER, &speed2Fixdt);
-		
+		  //printf("inIdx: %i \t input1[inIdx].cmd: %i input2[inIdx].cmd: %i\r\n", inIdx, input1[inIdx].cmd, input2[inIdx].cmd);
+      //printf("inIdx: %i \t input1[inIdx].cmd: %i input2[inIdx].cmd: %i\r\n", 1, input1[1].cmd, input2[1].cmd);
       speed1 = (int16_t)(speed1Fixdt >> 16);  // convert fixed-point to integer
       speed2 = (int16_t)(speed2Fixdt >> 16);  // convert fixed-point to integer
 		// uncomment for step input testing 
@@ -472,8 +473,8 @@ int main(void) {
 		// end step input testing	
 		//PIDL.input = speed1;//-input1[inIdx].cmd; scaled to +_1000 counts input
 		//PIDR.input = speed2;// input2[inIdx].cmd scaled to +- 1000 counts input	
-		PIDL.input = 800;//-input1[inIdx].cmd; scaled to +_1000 counts input
-		PIDR.input = 800;// input2[inIdx].cmd scaled to +- 1000 counts input
+		PIDL.input = 400;//-input1[inIdx].cmd; scaled to +_1000 counts input
+		PIDR.input = 400;// input2[inIdx].cmd scaled to +- 1000 counts input
 			
 		#ifdef INVERT_R_DIRECTION
       PIDL.input = -PIDL.input1;       
@@ -487,11 +488,11 @@ int main(void) {
 		//PIDL.feedback = (MotorPosL*2000)/5400; // scale to 2000 units per rotation   sf = .37 =2000/(360 deg*15pole pairs= 5400 elec deg)
 		//PIDR.feedback = (MotorPosR*2000)/5400;  //minimum step is 60 deg elec phase angle, or 4 deg mechanical angle
 		PID(&PIDL);// left pid control
-	  print_PID(PIDL);  
+	  //print_PID(PIDL);  
 		PID(&PIDR);// right pid control
 		//print_PID(PIDR);
 		//limit pwm to 100 during first five seconds to keep turn on transients safe
-		if(main_loop_counter < 1000){
+		if(main_loop_counter < 100){
 		cmdL = CLAMP(PIDL.output,-100,100);
 		cmdR = CLAMP(PIDR.output,-100,100);
 		}
@@ -500,12 +501,12 @@ int main(void) {
 		cmdR = CLAMP(PIDR.output,-500,500);	
 		}
 
-    /*if(abs(PIDL.error) < PIDDZ) {
+    if(abs(PIDL.error) < PIDDZ) {
       cmdL = 0;  // Остановить мотор в зоне нечувствительности
-    } else if (abs(PIDL.error) > PIDDZ && abs(PIDL.error) < PIDDZ * 10){
+    } else if (abs(PIDL.error) > PIDDZ && abs(PIDL.error) < PIDDZ * 5){
       cmdL = CLAMP(PIDL.output, -100, 100); // Ограничить PWM при малых ошибках
     }
-    printf("cmdL:%i \t PIDL.output:%i \r\n", cmdL, PIDL.output);*/
+    //printf("cmdL:%i \t PIDL.output:%i \r\n", cmdL, PIDL.output);
 		pwml = -cmdL;//инверсия выхода регулятора для того, чтобы колесо двигалось К цели, а не от неё
 		pwmr = cmdR;
 		//if (main_loop_counter >= 2) pwml = pwmr=500;//speed test
